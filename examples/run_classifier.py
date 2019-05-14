@@ -402,8 +402,9 @@ class WnliProcessor(DataProcessor):
         return examples
 
 
-class Twitter1516Processor(DataProcessor):
-    """Processor for the Twitter15 and Twitter16 data set."""
+class Twitter1516ProcessorLinear(DataProcessor):
+    """Processor for the Twitter15 and Twitter16 data set. 
+    All tweets are concatenated to store at the first segment"""
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -423,13 +424,45 @@ class Twitter1516Processor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
-            if i == 0:
-                continue
             guid = "%s-%s" % (set_type, i)
             text_a = line[0]
             label = line[1]
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+
+class Twitter1516ProcessorTwoSegments(DataProcessor):
+    """Processor for the Twitter15 and Twitter16 data set. 
+    Original root tweet is stored at first segment. 
+    All subsequent tweets are concatenated and stored at second segment"""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["0", "1", "2", "3"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            if i == 0:  # Header
+                continue
+            guid = "%s-%s" % (set_type, i)
+            text_a = line[2]
+            text_b = line[3]
+            label = line[1]
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
 
@@ -588,7 +621,9 @@ def compute_metrics(task_name, preds, labels):
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "wnli":
         return {"acc": simple_accuracy(preds, labels)}
-    elif task_name == "twitter-1516":
+    elif task_name == "twitter-1516-linear":
+        return {"acc": simple_accuracy(preds, labels)}
+    elif task_name == "twitter-1516-2segments":
         return {"acc": simple_accuracy(preds, labels)}
     else:
         raise KeyError(task_name)
@@ -704,7 +739,8 @@ def main():
         "qnli": QnliProcessor,
         "rte": RteProcessor,
         "wnli": WnliProcessor,
-        "twitter-1516": Twitter1516Processor,
+        "twitter-1516-linear": Twitter1516ProcessorLinear,
+        "twitter-1516-2segments": Twitter1516ProcessorTwoSegments,
     }
 
     output_modes = {
@@ -717,7 +753,8 @@ def main():
         "qnli": "classification",
         "rte": "classification",
         "wnli": "classification",
-        "twitter-1516": "classification",
+        "twitter-1516-linear": "classification",
+        "twitter-1516-2segments": "classification",
     }
 
     if args.local_rank == -1 or args.no_cuda:
