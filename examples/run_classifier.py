@@ -986,7 +986,7 @@ def main():
             label_ids = label_ids.to(device)
 
             with torch.no_grad():
-                logits = model(input_ids, segment_ids, input_mask, labels=None)
+                logits, attention_probs = model(input_ids, segment_ids, input_mask, labels=None, return_attention=True)
 
             # create eval loss and other metric required by the task
             if output_mode == "classification":
