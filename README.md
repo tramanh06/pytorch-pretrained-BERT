@@ -1,4 +1,4 @@
-# PyTorch Pretrained BERT: Extended with Heatmap of attention weights
+# PyTorch Pretrained BERT: Extended with Visualization of attention weights
 
 This is a fork from the HuggingFace's Pytorch implementation of BERT. Please see the original README at https://github.com/huggingface/pytorch-pretrained-BERT 
 
@@ -130,7 +130,7 @@ model_fn = '../logs/hierarchical_models/twitter15_split_0/pytorch_model.bin'   #
 ```
 
 2. In `Interpret_BERT.py`, specify the directory of the test data. Note that if in step 1, the model chosen is coming from **split_0**, it is 
-important to use the corresponding split for the data.
+important to use the same split for the data.
 
 ```
 # Example. The data location is to be changed accordingly
