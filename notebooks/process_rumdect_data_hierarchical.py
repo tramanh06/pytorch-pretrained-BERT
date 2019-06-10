@@ -1,3 +1,6 @@
+'''This file is to preprocess data using ekphrasis. 
+Author: Jianfei
+'''
 
 # coding: utf-8
 

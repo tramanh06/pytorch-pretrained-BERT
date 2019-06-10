@@ -1,4 +1,5 @@
 logs/
+examples/heatmap_output/
 
 # Initially taken from Github's Python gitignore file
 

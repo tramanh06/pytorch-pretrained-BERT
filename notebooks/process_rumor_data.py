@@ -1,5 +1,9 @@
 # coding: utf-8
 
+'''This file is to preprocess data using ekphrasis. 
+Author: Jianfei
+'''
+
 ''' Script for downloading all GLUE data.
 
 Note: for legal reasons, we are unable to host MRPC.
